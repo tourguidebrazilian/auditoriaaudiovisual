@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Análise de Evidências Audiovisuais - TCC</title>
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome para ícones -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    /* Estilização da barra de rolagem personalizada */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f5f9;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+  </style>
+</head>
+<body class="bg-slate-100 text-slate-800 h-screen w-screen overflow-hidden font-sans antialiased">
+
+  <!-- APP CONTAINER (Travado na altura da tela) -->
+  <div class="h-full w-full max-w-[1600px] mx-auto p-3 md:p-4 flex flex-col box-border">
+    
+    <!-- Cabeçalho Principal -->
+    <header class="flex-none mb-3 flex items-center justify-between border-b border-slate-300 pb-2">
+      <div>
+        <h1 class="text-xl font-bold text-emerald-900 flex items-center gap-2">
+          <i class="fa-solid fa-file-video text-emerald-700"></i>
+          Ficha de Análise Audiovisual
+        </h1>
+        <p class="text-xs text-slate-500">Organização e fichamento de evidências científicas e qualitativas para TCC</p>
+      </div>
+      <div class="flex items-center gap-2">
+        <button onclick="limparTudo()" title="Limpar todos os dados armazenados" class="text-xs px-3 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded font-medium transition duration-150 flex items-center gap-1.5">
+          <i class="fa-solid fa-trash-can"></i> Limpar Dados
+        </button>
+      </div>
+    </header>
+
+    <!-- ÁREA DE CONTEÚDO PRINCIPAL (Grid Dividido) -->
+    <main class="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-4 min-h-0 overflow-hidden">
+      
+      <!-- COLUNA DA ESQUERDA: Formulários e Entrada (5 de 12 colunas) -->
+      <section class="lg:col-span-5 flex flex-col h-full min-h-0 gap-3 overflow-y-auto pr-1">
+        
+        <!-- BLOCO 1: Metadados do Vídeo -->
+        <div class="bg-white p-3.5 rounded-lg border border-emerald-800/30 shadow-sm flex-none">
+          <div class="flex justify-between items-center mb-2">
+            <h2 class="text-sm font-bold text-emerald-900 uppercase tracking-wider flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-emerald-700"></span>
+              1. Metadados do Vídeo / Mídia
+            </h2>
+            <div id="statusFetch" class="text-[11px] text-slate-500 font-medium"></div>
+          </div>
+
+          <div class="space-y-2.5">
+            <!-- Título e URL de Acesso -->
+            <div class="grid grid-cols-1 sm:grid-cols-12 gap-2">
+              <div class="sm:col-span-6">
+                <label class="block text-[11px] font-semibold text-slate-600 mb-1">Título da Mídia:</label>
+                <input type="text" id="tituloMidia" placeholder="Ex: AS MULHERES DO GAU" class="w-full px-2.5 py-1.5 text-xs bg-slate-50 border border-slate-300 rounded focus:bg-white focus:ring-1 focus:ring-emerald-600 focus:border-emerald-600 outline-none transition" />
+              </div>
+              <div class="sm:col-span-6">
+                <div class="flex items-center justify-between mb-1">
+                  <label class="block text-[11px] font-semibold text-slate-600">URL de Acesso:</label>
+                  <button type="button" onclick="abrirYoutubeUrl()" title="Abrir link do YouTube em nova guia" class="text-xs text-red-600 hover:text-red-700 hover:bg-red-50 px-1.5 py-0.5 rounded transition flex items-center gap-1 font-medium">
+                    <i class="fa-brands fa-youtube text-sm"></i>
+                    <span class="text-[10px]">Abrir</span>
+                  </button>
+                </div>
+                <input type="url" id="urlAcesso" oninput="processarUrlAuto()" placeholder="Cole o link do YouTube..." class="w-full px-2.5 py-1.5 text-xs bg-slate-50 border border-slate-300 rounded focus:bg-white focus:ring-1 focus:ring-emerald-600 focus:border-emerald-600 outline-none transition" />
+              </div>
+            </div>
+
+            <!-- Canal/Autor, Data de Publicação e Duração -->
+            <div class="grid grid-cols-1 sm:grid-cols-12 gap-2">
+              <div class="sm:col-span-6">
+                <label class="block text-[11px] font-semibold text-slate-600 mb-1">Canal / Autor:</label>
+                <input type="text" id="canalAutor" placeholder="Ex: Chico Abelha" class="w-full px-2.5 py-1.5 text-xs bg-slate-50 border border-slate-300 rounded focus:bg-white focus:ring-1 focus:ring-emerald-600 focus:border-emerald-600 outline-none transition" />
+              </div>
+              <div class="sm:col-span-3">
+                <label class="block text-[11px] font-semibold text-slate-600 mb-1">Data de Publicação:</label>
+                <input type="text" id="dataPub" oninput="aplicarMascaraData(this)" placeholder="dd/mm/aaaa" maxlength="10" class="w-full px-2.5 py-1.5 text-xs bg-slate-50 border border-slate-300 rounded focus:bg-white focus:ring-1 focus:ring-emerald-600 outline-none transition text-center font-mono" />
+              </div>
+              <div class="sm:col-span-3">
+                <label class="block text-[11px] font-semibold text-slate-600 mb-1">Duração do Vídeo:</label>
+                <input type="text" id="duracaoTotal" oninput="aplicarMascaraDuracao(this)" placeholder="00h00m00s" maxlength="9" class="w-full px-2.5 py-1.5 text-xs bg-slate-50 border border-slate-300 rounded focus:bg-white focus:ring-1 focus:ring-emerald-600 outline-none transition text-center font-mono" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- BLOCO 2: Adicionar Bloco de Evidência -->
+        <div class="bg-white p-3.5 rounded-lg border border-emerald-800/30 shadow-sm flex-1 flex flex-col justify-between min-h-0">
+          <div>
+            <h2 class="text-sm font-bold text-emerald-900 uppercase tracking-wider mb-2.5 flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-emerald-700"></span>
+              2. Adicionar Bloco de Evidência
+            </h2>
+
+            <div class="space-y-3">
+              <!-- Minutagem (Início/Fim) e Personagem -->
+              <div class="grid grid-cols-12 gap-2">
+                <div class="col-span-3">
+                  <label class="block text-[11px] font-semibold text-slate-600 mb-1">Minutagem (Início):</label>
+                  <input type="text" id="minInicio" oninput="aplicarMascaraMinutagem(this)" placeholder="00:00:00" maxlength="8" class="w-full px-2 py-1.5 text-xs text-center font-mono bg-slate-50 border border-slate-300 rounded focus:bg-white focus:ring-1 focus:ring-emerald-600 outline-none transition" />
+                </div>
+                <div class="col-span-3">
+                  <label class="block text-[11px] font-semibold text-slate-600 mb-1">Minutagem (Fim):</label>
+                  <input type="text" id="minFim" oninput="aplicarMascaraMinutagem(this)" placeholder="00:00:00" maxlength="8" class="w-full px-2 py-1.5 text-xs text-center font-mono bg-slate-50 border border-slate-300 rounded focus:bg-white focus:ring-1 focus:ring-emerald-600 outline-none transition" />
+                </div>
+                <div class="col-span-6">
+                  <label class="block text-[11px] font-semibold text-slate-600 mb-1">Personagem / Entrevistado:</label>
+                  <input type="text" id="personagem" list="listaPersonagens" placeholder="Ex: Dona Conceição" class="w-full px-2.5 py-1.5 text-xs bg-slate-50 border border-slate-300 rounded focus:bg-white focus:ring-1 focus:ring-emerald-600 outline-none transition" />
+                  <!-- Datalist para autocomplete dos personagens armazenados na sessão -->
+                  <datalist id="listaPersonagens"></datalist>
+                </div>
+              </div>
+
+              <!-- Eixos Transversais / Temas -->
+              <div>
+                <label class="block text-[11px] font-semibold text-slate-600 mb-1">Eixos Transversais (Temas):</label>
+                <div class="flex flex-wrap gap-1.5 items-center" id="tagsContainer">
+                  <button type="button" onclick="toggleTag(this)" class="tag-btn text-xs px-2.5 py-1 rounded-full border border-slate-300 text-slate-600 hover:bg-slate-100 transition">Visitas</button>
+                  <button type="button" onclick="toggleTag(this)" class="tag-btn text-xs px-2.5 py-1 rounded-full border border-slate-300 text-slate-600 hover:bg-slate-100 transition">Crianças</button>
+                  <button type="button" onclick="toggleTag(this)" class="tag-btn text-xs px-2.5 py-1 rounded-full border border-slate-300 text-slate-600 hover:bg-slate-100 transition">Alimentação</button>
+                  <button type="button" onclick="toggleTag(this)" class="tag-btn text-xs px-2.5 py-1 rounded-full border border-slate-300 text-slate-600 hover:bg-slate-100 transition">Trajetórias</button>
+                  <button type="button" onclick="toggleTag(this)" class="tag-btn text-xs px-2.5 py-1 rounded-full border border-slate-300 text-slate-600 hover:bg-slate-100 transition">Trabalho</button>
+                  <button type="button" onclick="toggleTag(this)" class="tag-btn text-xs px-2.5 py-1 rounded-full border border-slate-300 text-slate-600 hover:bg-slate-100 transition">Território</button>
+                  <button type="button" onclick="adicionarNovaTag()" class="text-xs px-2.5 py-1 rounded-full border border-dashed border-emerald-600 text-emerald-700 bg-emerald-50 hover:bg-emerald-100 transition flex items-center gap-1 font-semibold">
+                    <i class="fa-solid fa-plus text-[10px]"></i> Tema
+                  </button>
+                </div>
+              </div>
+
+              <!-- Trecho Transcrito -->
+              <div>
+                <label class="block text-[11px] font-semibold text-slate-600 mb-1">Trecho Transcrito / Citação:</label>
+                <textarea id="trechoTranscrito" rows="7" placeholder="Cole aqui a fala literal do entrevistado..." class="w-full p-2.5 text-xs font-mono bg-slate-50 border border-slate-300 rounded focus:bg-white focus:ring-1 focus:ring-emerald-600 outline-none transition resize-y"></textarea>
+              </div>
+
+              <!-- Análise com o TCC -->
+              <div>
+                <label class="block text-[11px] font-semibold text-slate-600 mb-1">Análise / Ligação com o TCC:</label>
+                <textarea id="analiseTCC" rows="3" placeholder="Impacto desta fala no objetivo do TCC..." class="w-full p-2.5 text-xs bg-slate-50 border border-slate-300 rounded focus:bg-white focus:ring-1 focus:ring-emerald-600 outline-none transition resize-y"></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- Botão de Registro -->
+          <button type="button" onclick="registrarBloco()" class="w-full mt-3 py-2.5 bg-emerald-900 hover:bg-emerald-950 text-white text-xs font-bold uppercase tracking-wider rounded shadow transition flex items-center justify-center gap-2">
+            <i class="fa-solid fa-plus-circle"></i> + Registrar Bloco de Evidência
+          </button>
+        </div>
+
+      </section>
+
+      <!-- COLUNA DA DIREITA: Blocos Registrados e Exportação (7 de 12 colunas) -->
+      <section class="lg:col-span-7 flex flex-col h-full min-h-0 gap-3">
+        
+        <!-- BLOCO 3: Lista de Registros -->
+        <div class="bg-white p-3.5 rounded-lg border border-slate-300 shadow-sm flex-1 flex flex-col min-h-0">
+          <div class="flex items-center justify-between pb-2 border-b border-slate-200 mb-3 flex-none">
+            <h2 class="text-sm font-bold text-slate-800 uppercase tracking-wider flex items-center gap-2">
+              3. Blocos Registrados
+            </h2>
+            <span id="contadorBlocos" class="bg-slate-100 text-slate-700 text-xs px-2.5 py-0.5 rounded-full font-bold border border-slate-200">(0)</span>
+          </div>
+
+          <!-- Lista Roolável -->
+          <div id="listaBlocos" class="flex-1 overflow-y-auto pr-2 space-y-3">
+            <div id="emptyState" class="h-full flex flex-col items-center justify-center text-slate-400 py-12">
+              <i class="fa-regular fa-folder-open text-4xl mb-2 text-slate-300"></i>
+              <p class="text-xs">Nenhum bloco registrado até o momento.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- BLOCO 4: Exportação -->
+        <div class="bg-white p-3.5 rounded-lg border border-emerald-800/30 shadow-sm flex-none">
+          <h2 class="text-sm font-bold text-emerald-900 uppercase tracking-wider mb-2.5 flex items-center gap-2">
+            4. Exportar Documento Final
+          </h2>
+
+          <div class="space-y-2">
+            <button onclick="visualizarPrevia()" class="w-full py-2 bg-emerald-800 hover:bg-emerald-900 text-white text-xs font-bold rounded shadow transition flex items-center justify-center gap-2">
+              <i class="fa-solid fa-file-lines"></i> Visualizar Prévia do Relatório
+            </button>
+
+            <div class="grid grid-cols-3 gap-2">
+              <button onclick="exportarDOCX()" class="py-2 bg-blue-700 hover:bg-blue-800 text-white text-xs font-semibold rounded shadow transition flex items-center justify-center gap-1.5">
+                <i class="fa-solid fa-file-word"></i> Baixar .DOCX
+              </button>
+              <button onclick="exportarTXT()" class="py-2 bg-slate-700 hover:bg-slate-800 text-white text-xs font-semibold rounded shadow transition flex items-center justify-center gap-1.5">
+                <i class="fa-solid fa-file-lines"></i> Baixar .TXT
+              </button>
+              <button onclick="exportarMD()" class="py-2 bg-teal-700 hover:bg-teal-800 text-white text-xs font-semibold rounded shadow transition flex items-center justify-center gap-1.5">
+                <i class="fa-solid fa-code"></i> Baixar .MD
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </section>
+    </main>
+  </div>
+
+  <!-- MODAL DE PRÉVIA DO RELATÓRIO -->
+  <div id="modalPrevia" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+    <div class="bg-white rounded-xl shadow-2xl max-w-3xl w-full max-h-[90vh] flex flex-col overflow-hidden border border-slate-300">
+      <div class="p-4 bg-emerald-900 text-white flex justify-between items-center">
+        <h3 class="font-bold text-sm flex items-center gap-2">
+          <i class="fa-solid fa-eye"></i> Prévia do Relatório Consolidado
+        </h3>
+        <button onclick="fecharPrevia()" class="text-white/80 hover:text-white text-lg font-bold px-2">&times;</button>
+      </div>
+      <div id="conteudoPrevia" class="p-6 overflow-y-auto font-mono text-xs bg-slate-50 whitespace-pre-wrap leading-relaxed text-slate-800 border-b"></div>
+      <div class="p-3 bg-slate-100 flex justify-end gap-2">
+        <button onclick="fecharPrevia()" class="px-4 py-1.5 bg-slate-300 hover:bg-slate-400 text-slate-800 text-xs font-semibold rounded transition">Fechar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCRIPT DE LÓGICA E MÁSCARAS -->
+  <script>
+    let blocos = [];
+    let urlAnteriorProcessada = '';
+
+    // Inicialização
+    document.addEventListener('DOMContentLoaded', () => {
+      carregarDadosSalvos();
+      carregarHistoricoPersonagens();
+      configurarAutoSave();
+    });
+
+    // MÁSCARA 1: Data de Publicação (dd/mm/aaaa)
+    function aplicarMascaraData(input) {
+      let v = input.value.replace(/\D/g, '');
+      if (v.length > 8) v = v.substring(0, 8);
+      if (v.length > 4) {
+        input.value = `${v.substring(0, 2)}/${v.substring(2, 4)}/${v.substring(4)}`;
+      } else if (v.length > 2) {
+        input.value = `${v.substring(0, 2)}/${v.substring(2)}`;
+      } else {
+        input.value = v;
+      }
+    }
+
+    // MÁSCARA 2: Duração do Vídeo (00h00m00s)
+    function aplicarMascaraDuracao(input) {
+      let v = input.value.replace(/\D/g, '');
+      if (v.length > 6) v = v.substring(0, 6);
+      if (v.length > 4) {
+        input.value = `${v.substring(0, 2)}h${v.substring(2, 4)}m${v.substring(4)}s`;
+      } else if (v.length > 2) {
+        input.value = `${v.substring(0, 2)}h${v.substring(2)}m`;
+      } else if (v.length > 0) {
+        input.value = `${v}h`;
+      } else {
+        input.value = '';
+      }
+    }
+
+    // MÁSCARA 3: Minutagem Temporal de Legenda (00:00:00)
+    function aplicarMascaraMinutagem(input) {
+      let v = input.value.replace(/\D/g, '');
+      if (v.length > 6) v = v.substring(0, 6);
+      if (v.length > 4) {
+        input.value = `${v.substring(0, 2)}:${v.substring(2, 4)}:${v.substring(4)}`;
+      } else if (v.length > 2) {
+        input.value = `${v.substring(0, 2)}:${v.substring(2)}`;
+      } else {
+        input.value = v;
+      }
+    }
+
+    // GERENCIAMENTO DE HISTÓRICO DE PERSONAGENS (sessionStorage)
+    function carregarHistoricoPersonagens() {
+      const historico = JSON.parse(sessionStorage.getItem('historico_personagens') || '[]');
+      atualizarDatalistPersonagens(historico);
+    }
+
+    function salvarPersonagemNoHistorico(nome) {
+      if (!nome) return;
+      let historico = JSON.parse(sessionStorage.getItem('historico_personagens') || '[]');
+      if (!historico.includes(nome)) {
+        historico.push(nome);
+        sessionStorage.setItem('historico_personagens', JSON.stringify(historico));
+        atualizarDatalistPersonagens(historico);
+      }
+    }
+
+    function atualizarDatalistPersonagens(lista) {
+      const datalist = document.getElementById('listaPersonagens');
+      datalist.innerHTML = lista.map(p => `<option value="${p}">`).join('');
+    }
+
+    // Busca Automática de Metadados do YouTube
+    async function processarUrlAuto() {
+      const urlInput = document.getElementById('urlAcesso').value.trim();
+      const statusFetch = document.getElementById('statusFetch');
+
+      if (!urlInput || urlInput === urlAnteriorProcessada) return;
+
+      const videoId = extrairYoutubeID(urlInput);
+      if (videoId) {
+        urlAnteriorProcessada = urlInput;
+        statusFetch.innerHTML = `<span class="text-amber-600"><i class="fa-solid fa-spinner fa-spin"></i> Buscando metadados...</span>`;
+        
+        try {
+          const res = await fetch(`https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${videoId}&format=json`);
+          if (res.ok) {
+            const data = await res.json();
+            document.getElementById('tituloMidia').value = data.title || '';
+            document.getElementById('canalAutor').value = data.author_name || '';
+            statusFetch.innerHTML = `<span class="text-emerald-600 font-semibold"><i class="fa-solid fa-check"></i> Metadados carregados!</span>`;
+            salvarEstadoGeral();
+          } else {
+            statusFetch.innerHTML = `<span class="text-slate-400">Insira as informações manualmente</span>`;
+          }
+        } catch (e) {
+          statusFetch.innerHTML = `<span class="text-slate-400">Incapaz de buscar metadados automaticamente</span>`;
+        }
+      } else {
+        statusFetch.innerHTML = '';
+      }
+    }
+
+    function extrairYoutubeID(url) {
+      const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+      const match = url.match(regExp);
+      return (match && match[2].length === 11) ? match[2] : null;
+    }
+
+    function abrirYoutubeUrl() {
+      const url = document.getElementById('urlAcesso').value.trim();
+      if (url) {
+        window.open(url, '_blank');
+      } else {
+        alert('Por favor, insira uma URL de vídeo no campo correspondente.');
+      }
+    }
+
+    // Gerenciamento de Tags (Temas)
+    function toggleTag(btn) {
+      if (btn.classList.contains('bg-emerald-800')) {
+        btn.classList.remove('bg-emerald-800', 'text-white', 'border-emerald-900');
+        btn.classList.add('border-slate-300', 'text-slate-600');
+      } else {
+        btn.classList.add('bg-emerald-800', 'text-white', 'border-emerald-900');
+        btn.classList.remove('border-slate-300', 'text-slate-600');
+      }
+    }
+
+    function adicionarNovaTag() {
+      const novoTema = prompt('Digite o nome do novo tema transversal:');
+      if (novoTema && novoTema.trim() !== '') {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'tag-btn text-xs px-2.5 py-1 rounded-full border border-emerald-900 bg-emerald-800 text-white transition';
+        btn.innerText = novoTema.trim();
+        btn.onclick = function() { toggleTag(this); };
+        
+        const container = document.getElementById('tagsContainer');
+        container.insertBefore(btn, container.lastElementChild);
+      }
+    }
+
+    // Registrar Bloco
+    function registrarBloco() {
+      const minInicio = document.getElementById('minInicio').value.trim();
+      const minFim = document.getElementById('minFim').value.trim();
+      const personagem = document.getElementById('personagem').value.trim();
+      const trecho = document.getElementById('trechoTranscrito').value.trim();
+      const analise = document.getElementById('analiseTCC').value.trim();
+
+      const tagsSelecionadas = Array.from(document.querySelectorAll('#tagsContainer .tag-btn'))
+        .filter(b => b.classList.contains('bg-emerald-800'))
+        .map(b => b.innerText);
+
+      if (!trecho) {
+        alert('Por favor, insira o trecho transcrito para registrar a evidência.');
+        return;
+      }
+
+      if (personagem) {
+        salvarPersonagemNoHistorico(personagem);
+      }
+
+      const novoBloco = {
+        id: Date.now(),
+        minInicio: minInicio || '00:00:00',
+        minFim: minFim || '00:00:00',
+        personagem: personagem || 'Não identificado',
+        tags: tagsSelecionadas,
+        trecho,
+        analise
+      };
+
+      blocos.push(novoBloco);
+      renderizarBlocos();
+      limparCamposBloco();
+      salvarEstadoGeral();
+    }
+
+    function renderizarBlocos() {
+      const container = document.getElementById('listaBlocos');
+      const contador = document.getElementById('contadorBlocos');
+      contador.innerText = `(${blocos.length})`;
+
+      if (blocos.length === 0) {
+        container.innerHTML = `
+          <div id="emptyState" class="h-full flex flex-col items-center justify-center text-slate-400 py-12">
+            <i class="fa-regular fa-folder-open text-4xl mb-2 text-slate-300"></i>
+            <p class="text-xs">Nenhum bloco registrado até o momento.</p>
+          </div>`;
+        return;
+      }
+
+      container.innerHTML = blocos.map((b, index) => `
+        <div class="p-3 bg-slate-50 rounded-lg border border-slate-200 hover:border-emerald-600/50 transition relative group">
+          <div class="flex items-center justify-between mb-1.5">
+            <div class="flex items-center gap-2">
+              <span class="bg-emerald-900 text-white text-[10px] font-mono px-2 py-0.5 rounded font-bold">
+                ${b.minInicio} - ${b.minFim}
+              </span>
+              <span class="text-xs font-bold text-slate-800">${b.personagem}</span>
+            </div>
+            <button onclick="removerBloco(${b.id})" title="Excluir este bloco" class="text-slate-400 hover:text-rose-600 transition text-xs px-1">
+              <i class="fa-solid fa-trash"></i>
+            </button>
+          </div>
+
+          ${b.tags.length > 0 ? `
+            <div class="flex flex-wrap gap-1 mb-2">
+              ${b.tags.map(t => `<span class="text-[10px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full font-medium">${t}</span>`).join('')}
+            </div>
+          ` : ''}
+
+          <blockquote class="text-xs font-mono bg-white p-2 rounded border border-slate-200 text-slate-700 italic mb-2 whitespace-pre-wrap">"${b.trecho}"</blockquote>
+
+          ${b.analise ? `
+            <div class="text-xs text-slate-600 bg-emerald-50/60 p-2 rounded border border-emerald-100">
+              <strong class="text-emerald-900 font-semibold block text-[10px] uppercase mb-0.5">Análise / Ligação TCC:</strong>
+              <p>${b.analise}</p>
+            </div>
+          ` : ''}
+        </div>
+      `).join('');
+    }
+
+    function removerBloco(id) {
+      if (confirm('Deseja excluir este bloco de evidência?')) {
+        blocos = blocos.filter(b => b.id !== id);
+        renderizarBlocos();
+        salvarEstadoGeral();
+      }
+    }
+
+    function limparCamposBloco() {
+      document.getElementById('minInicio').value = '';
+      document.getElementById('minFim').value = '';
+      document.getElementById('personagem').value = '';
+      document.getElementById('trechoTranscrito').value = '';
+      document.getElementById('analiseTCC').value = '';
+      
+      document.querySelectorAll('#tagsContainer .tag-btn').forEach(btn => {
+        btn.classList.remove('bg-emerald-800', 'text-white', 'border-emerald-900');
+        btn.classList.add('border-slate-300', 'text-slate-600');
+      });
+    }
+
+    function gerarTextoRelatorio() {
+      const titulo = document.getElementById('tituloMidia').value || 'Não informado';
+      const url = document.getElementById('urlAcesso').value || 'Não informada';
+      const canal = document.getElementById('canalAutor').value || 'Não informado';
+      const data = document.getElementById('dataPub').value || 'Não informada';
+      const duracao = document.getElementById('duracaoTotal').value || 'Não informada';
+
+      let texto = `==================================================\n`;
+      texto += `          RELATÓRIO DE EVIDÊNCIAS AUDIOVISUAIS    \n`;
+      texto += `==================================================\n\n`;
+      texto += `METADADOS DA MÍDIA:\n`;
+      texto += `--------------------------------------------------\n`;
+      texto += `Título da Mídia     : ${titulo}\n`;
+      texto += `URL de Acesso       : ${url}\n`;
+      texto += `Canal / Autor       : ${canal}\n`;
+      texto += `Data de Publicação  : ${data}\n`;
+      texto += `Duração do Vídeo    : ${duracao}\n`;
+      texto += `--------------------------------------------------\n\n`;
+      texto += `BLOCOS REGISTRADOS (${blocos.length}):\n`;
+      texto += `==================================================\n\n`;
+
+      if (blocos.length === 0) {
+        texto += `(Nenhum bloco de evidência registrado)\n`;
+      } else {
+        blocos.forEach((b, i) => {
+          texto += `[BLOCO #${i + 1}]\n`;
+          texto += `Minutagem  : ${b.minInicio} - ${b.minFim}\n`;
+          texto += `Personagem : ${b.personagem}\n`;
+          texto += `Temas/Eixos: ${b.tags.join(', ') || 'Nenhum'}\n`;
+          texto += `Citação/Trecho:\n"${b.trecho}"\n`;
+          if (b.analise) {
+            texto += `Análise TCC:\n${b.analise}\n`;
+          }
+          texto += `--------------------------------------------------\n\n`;
+        });
+      }
+
+      return texto;
+    }
+
+    function visualizarPrevia() {
+      document.getElementById('conteudoPrevia').innerText = gerarTextoRelatorio();
+      document.getElementById('modalPrevia').classList.remove('hidden');
+      document.getElementById('modalPrevia').classList.add('flex');
+    }
+
+    function fecharPrevia() {
+      document.getElementById('modalPrevia').classList.add('hidden');
+      document.getElementById('modalPrevia').classList.remove('flex');
+    }
+
+    function downloadArquivo(conteudo, nomeArquivo, tipo) {
+      const blob = new Blob([conteudo], { type: tipo });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = nomeArquivo;
+      link.click();
+      URL.revokeObjectURL(link.href);
+    }
+
+    function exportarTXT() {
+      downloadArquivo(gerarTextoRelatorio(), 'Relatorio_Evidencias.txt', 'text/plain;charset=utf-8');
+    }
+
+    function exportarMD() {
+      downloadArquivo(gerarTextoRelatorio(), 'Relatorio_Evidencias.md', 'text/markdown;charset=utf-8');
+    }
+
+    function exportarDOCX() {
+      const conteudoHtml = `
+        <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+        <head><meta charset='utf-8'><title>Relatório de Evidências</title></head>
+        <body style="font-family: Arial, sans-serif;">
+          <pre style="font-family: Courier New, monospace; white-space: pre-wrap;">${gerarTextoRelatorio()}</pre>
+        </body>
+        </html>`;
+      downloadArquivo(conteudoHtml, 'Relatorio_Evidencias.doc', 'application/msword');
+    }
+
+    function salvarEstadoGeral() {
+      const estado = {
+        tituloMidia: document.getElementById('tituloMidia').value,
+        urlAcesso: document.getElementById('urlAcesso').value,
+        canalAutor: document.getElementById('canalAutor').value,
+        dataPub: document.getElementById('dataPub').value,
+        duracaoTotal: document.getElementById('duracaoTotal').value,
+        blocos: blocos
+      };
+      localStorage.setItem('ficha_audiovisual_data', JSON.stringify(estado));
+    }
+
+    function carregarDadosSalvos() {
+      const salvos = localStorage.getItem('ficha_audiovisual_data');
+      if (salvos) {
+        try {
+          const estado = JSON.parse(salvos);
+          document.getElementById('tituloMidia').value = estado.tituloMidia || '';
+          document.getElementById('urlAcesso').value = estado.urlAcesso || '';
+          document.getElementById('canalAutor').value = estado.canalAutor || '';
+          document.getElementById('dataPub').value = estado.dataPub || '';
+          document.getElementById('duracaoTotal').value = estado.duracaoTotal || '';
+          blocos = estado.blocos || [];
+          renderizarBlocos();
+        } catch (e) {
+          console.error("Erro ao carregar dados do LocalStorage", e);
+        }
+      }
+    }
+
+    function configurarAutoSave() {
+      const campos = ['tituloMidia', 'urlAcesso', 'canalAutor', 'dataPub', 'duracaoTotal'];
+      campos.forEach(id => {
+        document.getElementById(id).addEventListener('input', salvarEstadoGeral);
+      });
+    }
+
+    function limparTudo() {
+      if (confirm('Atenção: Isso irá apagar todos os metadados e blocos registrados. Deseja continuar?')) {
+        localStorage.removeItem('ficha_audiovisual_data');
+        location.reload();
+      }
+    }
+  </script>
+</body>
+</html>
